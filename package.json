@@ -1,6 +1,6 @@
 {
+  "version": "0.1.2",
   "name": "loadly",
-  "version": "0.1.1",
   "description": "Load testing CLI + React UI with live analytics",
   "type": "module",
   "bin": {
@@ -9,6 +9,14 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sudoDevesh/loadly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sudoDevesh/loadly/issues"
+  },
+  "homepage": "https://github.com/sudoDevesh/loadly#readme",
   "scripts": {
     "dev": "node server/index.js --dev",
     "build": "npm run build:ui",
