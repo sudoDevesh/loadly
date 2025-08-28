@@ -6,6 +6,9 @@
   "bin": {
     "loadly": "./bin/cli.js"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "dev": "node server/index.js --dev",
     "build": "npm run build:ui",
