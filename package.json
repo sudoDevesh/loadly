@@ -1,0 +1,44 @@
+{
+  "name": "loadly",
+  "version": "0.1.1",
+  "description": "Load testing CLI + React UI with live analytics",
+  "type": "module",
+  "bin": {
+    "loadly": "./bin/cli.js"
+  },
+  "scripts": {
+    "dev": "node server/index.js --dev",
+    "build": "npm run build:ui",
+    "build:ui": "cd ui && npm install && npm run build",
+    "prepublishOnly": "npm run build",
+    "start": "node bin/cli.js",
+    "pack:check": "npm pack && tar -tf loadly-.tgz | sort && del loadly-.tgz 2>nul || rm -f loadly-*.tgz"
+  },
+  "files": [
+    "bin",
+    "server",
+    "core",
+    "ui/dist",
+    "package.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "express": "^4.19.2",
+    "open": "^10.1.0",
+    "picocolors": "^1.0.0",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "load-testing",
+    "cli",
+    "react",
+    "websocket",
+    "performance",
+    "stress-test"
+  ],
+  "author": "sudoDevesh",
+  "license": "MIT"
+}
