@@ -9,6 +9,11 @@ Modern, lightweight API load testing with a local React UI. Install globally, ru
 
 ---
 
+## 📽️ Demo Video
+
+[![Watch the demo](https://cdn.sanity.io/images/9tcahs1q/production/7e43866807c0af93dd1c9679bd011452c3b39628-1280x720.png?w=2000&fit=max&auto=format)](https://youtu.be/SgiNto-QxrM)
+
+
 ## Why Loadly?
 
 Most load-testing tools force a choice:
