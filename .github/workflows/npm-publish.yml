@@ -13,6 +13,15 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - name: Build root package
+        run: npm run build
+      - name: Build UI
+        run: |
+          cd ui
+          rm -rf node_modules package-lock.json
+          npm install
+          npm rebuild
+          npm run build
 
   publish-npm:
     needs: build
@@ -24,6 +33,13 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
       - run: npm ci
+      - name: Build UI
+        run: |
+          cd ui
+          rm -rf node_modules package-lock.json
+          npm install
+          npm rebuild
+          npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
