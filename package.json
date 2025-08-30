@@ -1,5 +1,5 @@
 {
-  "version": "0.1.6",
+  "version": "0.1.7",
   "name": "loadly",
   "description": "Load testing CLI + React UI with live analytics",
   "type": "module",
@@ -49,7 +49,20 @@
     "react",
     "websocket",
     "performance",
-    "stress-test"
+    "stress-test",
+    "api-testing",
+    "http-benchmark",
+    "web-performance",
+    "scalability",
+    "throughput",
+    "concurrency-test",
+    "server-load",
+    "latency-measure",
+    "automation",
+    "dev-tool",
+    "nodejs-tool",
+    "frontend-testing",
+    "backend-testing"
   ],
   "author": "sudoDevesh",
   "license": "MIT",
