@@ -1,9 +1,6 @@
 name: Branch Build & Test
 
 on:
-  push:
-    branches-ignore:
-      - main      # Exclude main branch
   pull_request:
     branches:
       - main      # Still run on PRs targeting main
