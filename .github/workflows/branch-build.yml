@@ -2,11 +2,11 @@ name: Branch Build & Test
 
 on:
   push:
-    branches:
-      - '**'       # Run on all branches
+    branches-ignore:
+      - main      # Exclude main branch
   pull_request:
     branches:
-      - main       # Run when PR targets main
+      - main      # Still run on PRs targeting main
 
 jobs:
   build:
