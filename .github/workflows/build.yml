@@ -1,0 +1,33 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Build root package
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build UI
+        run: |
+          cd ui
+          rm -rf node_modules package-lock.json
+          npm install
+          npm rebuild
+          npm run build
