@@ -1,15 +1,17 @@
-import { performance } from "node:perf_hooks";
 import crypto from "node:crypto";
+import { performance } from "node:perf_hooks";
 
-function fillTemplate(value) {
+export function fillTemplate(value) {
   if (value == null) return value;
-  const replaceInString = (s) => s
-    .replace(/\{\{timestamp\}\}/g, String(Date.now()))
-    .replace(/\{\{uuid\}\}/g, crypto.randomUUID())
-    .replace(/\{\{randint:(-?\d+),(-?\d+)\}\}/g, (_, a, b) => {
-      const min = parseInt(a, 10), max = parseInt(b, 10);
-      return String(Math.floor(Math.random() * (max - min + 1)) + min);
-    });
+  const replaceInString = (s) =>
+    s
+      .replace(/\{\{timestamp\}\}/g, String(Date.now()))
+      .replace(/\{\{uuid\}\}/g, crypto.randomUUID())
+      .replace(/\{\{randint:(-?\d+),(-?\d+)\}\}/g, (_, a, b) => {
+        const min = parseInt(a, 10),
+          max = parseInt(b, 10);
+        return String(Math.floor(Math.random() * (max - min + 1)) + min);
+      });
   if (typeof value === "string") return replaceInString(value);
   if (Array.isArray(value)) return value.map(fillTemplate);
   if (typeof value === "object") {
@@ -20,11 +22,11 @@ function fillTemplate(value) {
   return value;
 }
 
-function pickWeighted(endpoints) {
+export function pickWeighted(endpoints) {
   const sum = endpoints.reduce((a, e) => a + (e.weight || 1), 0);
   let r = Math.random() * sum;
   for (const e of endpoints) {
-    r -= (e.weight || 1);
+    r -= e.weight || 1;
     if (r <= 0) return e;
   }
   return endpoints[endpoints.length - 1];
@@ -35,13 +37,7 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
   const tStart = Date.now();
   const tEnd = tStart + duration * 1000;
 
-  const stats = {
-    total: 0,
-    success: 0,
-    failure: 0,
-    times: [],
-    codes: {},
-  };
+  const stats = { total: 0, success: 0, failure: 0, times: [], codes: {} };
 
   const sendUpdate = () => {
     const elapsed = (Date.now() - tStart) / 1000;
@@ -79,7 +75,8 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
       stats.times.push(dt);
       stats.total++;
       stats.codes[res.status] = (stats.codes[res.status] || 0) + 1;
-      if (res.ok) stats.success++; else stats.failure++;
+      if (res.ok) stats.success++;
+      else stats.failure++;
     } catch (e) {
       const dt = performance.now() - t0;
       stats.times.push(dt);
@@ -94,7 +91,7 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
     while (Date.now() < tEnd && !(abortSignal?.aborted)) {
       await oneRequest();
       const now = Date.now();
-      if (now - lastUpdate > 250) { // throttle ~4/s
+      if (now - lastUpdate > 250) {
         lastUpdate = now;
         sendUpdate();
       }
@@ -102,7 +99,6 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
   }
 
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
-  // final update
   sendUpdate();
 
   const elapsed = (Date.now() - tStart) / 1000;
@@ -123,3 +119,6 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
     codes: stats.codes,
   };
 }
+
+// helper export for testing
+export const _test = { fillTemplate, pickWeighted };
