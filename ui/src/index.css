@@ -1,0 +1,63 @@
+body {
+  font-family: Inter, system-ui, Arial, sans-serif;
+}
+
+:root {
+  /* Endpoint method colors */
+  --color-get: #10b981;       /* green */
+  --color-post: #3b82f6;      /* blue */
+  --color-put: #f59e0b;       /* yellow/orange */
+  --color-delete: #ef4444;    /* red */
+  --color-patch: #8b5cf6;     /* purple */
+  --color-options: #6b7280;   /* gray */
+  --color-head: #6b7280;      /* gray */
+
+  /* Table and modal colors */
+  --color-table-border: #ddd;
+  --color-table-header-bg: #f9fafb;
+  --color-white: #ffffff;
+  --color-error: #ef4444;       /* red for errors */
+  --color-modal-bg: #ffffff;    /* modal background */
+  --color-modal-overlay: rgba(0,0,0,0.5);
+
+  /* Button colors */
+  --color-btn-primary-bg: #111827;
+  --color-btn-primary-bg-hover: #1f2937;
+  --color-btn-primary-color: #ffffff;
+
+  --color-btn-secondary-bg: transparent;
+  --color-btn-secondary-bg-hover: #e5e7eb;
+  --color-btn-secondary-color: #111827;
+
+  --color-btn-blank-bg: transparent;
+  --color-btn-blank-bg-hover: transparent;
+  --color-btn-blank-opacity-hover: 0.8;
+}
+
+
+
+
+.app-logo {
+  height: 10rem;
+  object-fit: contain;
+  margin-bottom: 8px;
+  position: absolute;
+  margin-top: -30px;
+}
+
+.app-content {
+  padding-top: 5rem;
+}
+
+.app-tagline {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
