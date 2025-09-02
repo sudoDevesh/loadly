@@ -1,51 +1,136 @@
-import React, { useState } from 'react'
+import { useState } from "react";
+import { Button } from "../elements/Button/Button";
+import { Input } from "../elements/Input/Input";
+import EndpointForm from "./EndpointForm";
+import EndpointTable from "./EndpointTable";
+import HeadersModal from "./HeaderModel";
 
-const defaultHeaders = JSON.stringify({ 'Content-Type': 'application/json' }, null, 2)
-const defaultEndpoints = JSON.stringify([
-  { url: 'https://httpbin.org/get', method: 'GET' },
-  { url: 'https://httpbin.org/post', method: 'POST', body: { id: '{{uuid}}', ts: '{{timestamp}}' } }
-], null, 2)
+const defaultEndpoints = [
+  { url: "https://httpbin.org/get", method: "GET" },
+  {
+    url: "https://httpbin.org/post",
+    method: "POST",
+    body: { id: "{{uuid}}", ts: "{{timestamp}}" },
+  },
+];
 
 export default function ConfigForm({ disabled, onStart }) {
-  const [concurrency, setConcurrency] = useState(10)
-  const [duration, setDuration] = useState(30)
-  const [headers, setHeaders] = useState(defaultHeaders)
-  const [endpoints, setEndpoints] = useState(defaultEndpoints)
+  const [concurrency, setConcurrency] = useState(10);
+  const [duration, setDuration] = useState(30);
+
+  const [headers, setHeaders] = useState([
+    { key: "Content-Type", value: "application/json" },
+  ]);
+  const [endpoints, setEndpoints] = useState(defaultEndpoints);
+
+  const [showHeadersModal, setShowHeadersModal] = useState(false);
+  const [showAddEndpointModal, setShowAddEndpointModal] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [error, setError] = useState("");
 
   const start = () => {
     try {
-      const cfg = {
+      const headerObj = headers.reduce((acc, h) => {
+        if (h.key.trim()) acc[h.key] = h.value;
+        return acc;
+      }, {});
+      onStart?.({
         concurrency: Number(concurrency),
         duration: Number(duration),
-        headers: JSON.parse(headers || '{}'),
-        endpoints: JSON.parse(endpoints || '[]')
-      }
-      onStart?.(cfg)
+        headers: headerObj,
+        endpoints,
+      });
     } catch (e) {
-      alert('Invalid JSON in headers or endpoints: ' + e.message)
+      alert("Invalid JSON in endpoints: " + e.message);
     }
-  }
+  };
 
   return (
-    <>
-    <div style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 16 }}>
-      <h3 style={{ marginTop: 0 }}>Test Settings</h3>
+    <div style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 16 }}>
+      {/* Top Row */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h3 style={{ margin: 0 }}>Test Settings</h3>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button type="button" onClick={() => setShowHeadersModal(true)}>
+            Manage Headers ({headers.length})
+          </Button>
+          <Button disabled={disabled} onClick={start}>
+            Start Testing
+          </Button>
+        </div>
+      </div>
 
-      <label>Concurrency (virtual users)</label>
-      <input type="number" min={1} value={concurrency} onChange={e => setConcurrency(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
+      {/* Concurrency & Duration */}
+      {/* Concurrency & Duration */}
+      <div style={{ display: "flex", gap: "16px", margin: "16px 0" }}>
+        <div style={{ flex: 1 }}>
+          <Input
+            type="number"
+            min={1}
+            label="Concurrency"
+            value={concurrency}
+            onChange={(e) => setConcurrency(e.target.value)}
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          <Input
+            type="number"
+            min={1}
+            label="Duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+        </div>
+      </div>
 
-      <label>Duration (seconds)</label>
-      <input type="number" min={1} value={duration} onChange={e => setDuration(e.target.value)} style={{ width: '100%', marginBottom: 8 }} />
+      {/* Endpoints */}
+      <EndpointTable
+        endpoints={endpoints}
+        setEndpoints={setEndpoints}
+        disabled={disabled}
+        setEditingIndex={setEditingIndex}
+        setShowAddEndpointModal={setShowAddEndpointModal}
+      />
 
-      <label>Common Headers (JSON)</label>
-      <textarea value={headers} onChange={e => setHeaders(e.target.value)} style={{ width: '100%', minHeight: 120, marginBottom: 8, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }} />
+      {/* Modals */}
+      {showHeadersModal && (
+        <HeadersModal
+          headers={headers}
+          setHeaders={setHeaders}
+          setShowHeadersModal={setShowHeadersModal}
+          error={error}
+          setError={setError}
+        />
+      )}
 
-      <label>Endpoints (JSON array)</label>
-      <textarea value={endpoints} onChange={e => setEndpoints(e.target.value)} style={{ width: '100%', minHeight: 180, marginBottom: 12, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }} />
+      {showAddEndpointModal && (
+        <EndpointForm
+          onSave={(ep) => {
+            setEndpoints([...endpoints, ep]);
+            setShowAddEndpointModal(false);
+          }}
+          onCancel={() => setShowAddEndpointModal(false)}
+        />
+      )}
 
-      <button onClick={start} disabled={disabled} style={{ padding: '10px 16px', borderRadius: 10, background: '#111827', color: 'white'}}>
-        Start Testing
-      </button>
-    </div></>
-  )
+      {editingIndex !== null && (
+        <EndpointForm
+          initial={endpoints[editingIndex]}
+          onSave={(ep) => {
+            const updated = [...endpoints];
+            updated[editingIndex] = ep;
+            setEndpoints(updated);
+            setEditingIndex(null);
+          }}
+          onCancel={() => setEditingIndex(null)}
+        />
+      )}
+    </div>
+  );
 }
