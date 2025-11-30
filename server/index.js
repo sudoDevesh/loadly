@@ -6,6 +6,7 @@ import pc from "picocolors";
 import open from "open";
 import { runLoadTest } from "../core/engine.js";
 import { parseClientConfig } from "./ws-schema.js";
+import { renderTerminal } from "../cli/terminal-renderer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -73,6 +74,7 @@ export async function createServerAndUI({ port = DEFAULT_PORT, openBrowser = fal
               if (ws.readyState === ws.OPEN) {
                 ws.send(JSON.stringify({ type: "update", data: update }));
               }
+              renderTerminal(update);
             },
             controller.signal
           );

@@ -47,7 +47,7 @@ export default function Dashboard({ live, done }) {
         <Box title="Total" value={live?.total?.toFixed?.(0)} />
         <Box title="Success" value={live?.success?.toFixed?.(0)} />
         <Box title="Failures" value={live?.failure?.toFixed?.(0)} />
-        <Box title="RPS" value={live ? live.rps.toFixed(1) : "—"} />
+        <Box title="RPS (req/sec)" value={live ? live.rps.toFixed(1) : "—"} />
         <Box title="Avg (ms)" value={live ? live.avg.toFixed(1) : "—"} />
         <Box title="p95 (ms)" value={live ? live.p95.toFixed(1) : "—"} />
         <Box
