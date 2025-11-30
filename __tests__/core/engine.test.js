@@ -24,6 +24,7 @@ describe("runLoadTest", () => {
       headers: {},
       duration: 0.1, // 100ms
       concurrency: 1,
+      rampUp: 0,    
     };
 
     const result = await runLoadTest(config, (u) => updates.push(u));
@@ -41,6 +42,7 @@ describe("runLoadTest", () => {
       endpoints: [{ url: "http://x" }],
       duration: 0.1,
       concurrency: 1,
+      rampUp: 0,  
     };
 
     const result = await runLoadTest(config, () => {});
@@ -57,6 +59,7 @@ describe("runLoadTest", () => {
       endpoints: [{ url: "http://x" }],
       duration: 0.1,
       concurrency: 1,
+      rampUp: 0, 
     };
 
     const result = await runLoadTest(config, () => {});
@@ -74,6 +77,7 @@ describe("runLoadTest", () => {
       endpoints: [{ url: "http://x" }],
       duration: 1, // 1 second
       concurrency: 1,
+      rampUp: 0,  
     };
 
     const promise = runLoadTest(config, () => {}, abortController.signal);
@@ -98,6 +102,7 @@ describe("runLoadTest", () => {
       endpoints: [{ url: "http://x" }],
       duration: 0.2,
       concurrency: 1,
+      rampUp: 0, 
     };
 
     const result = await runLoadTest(config, () => {});

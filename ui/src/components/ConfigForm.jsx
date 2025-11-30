@@ -36,6 +36,7 @@ export default function ConfigForm({ disabled, onStart }) {
   const [showAddEndpointModal, setShowAddEndpointModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [error, setError] = useState("");
+  const [rampUp, setRampUp] = useState(0);
 
   const fileInputRef = useRef(null);
 
@@ -48,6 +49,8 @@ export default function ConfigForm({ disabled, onStart }) {
         if (parsed.duration) setDuration(parsed.duration);
         if (parsed.headers) setHeaders(parsed.headers);
         if (parsed.endpoints) setEndpoints(parsed.endpoints);
+        if (parsed.rampUp !== undefined) setRampUp(parsed.rampUp);
+
       } catch (err) {
         console.error("Failed to parse saved config:", err);
       }
@@ -63,6 +66,7 @@ export default function ConfigForm({ disabled, onStart }) {
       onStart?.({
         concurrency: Number(concurrency),
         duration: Number(duration),
+        rampUp: Number(rampUp), 
         headers: headerObj,
         endpoints,
       });
@@ -74,6 +78,7 @@ export default function ConfigForm({ disabled, onStart }) {
   const currentConfig = () => ({
     concurrency,
     duration,
+    rampUp,
     headers,
     endpoints,
   });
@@ -198,6 +203,15 @@ export default function ConfigForm({ disabled, onStart }) {
             label="Duration"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          <Input
+            type="number"
+            min={0}
+            label="Ramp-Up (seconds)"
+            value={rampUp}
+            onChange={(e) => setRampUp(e.target.value)}
           />
         </div>
       </div>
