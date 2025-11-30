@@ -58,7 +58,7 @@ export default function EndpointTable({ endpoints, setEndpoints, disabled, setEd
                 </span>
               </td>
               <td style={tdStyle}>{ep.url}</td>
-              <td style={{ ...tdStyle, display: "flex", justifyContent: "center", gap: 8 }}>
+              <td style={{ ...tdStyle2, display: "flex", justifyContent: "center", gap: 8 }}>
                 <Button variant="blank" style={iconButtonStyle} onClick={() => setEditingIndex(i)}>
                   <MdOpenInFull size={18} />
                 </Button>
@@ -98,6 +98,12 @@ const thStyle = {
 
 const tdStyle = {
   border: "1px solid var(--color-table-border)",
+  padding: "10px 8px",
+  verticalAlign: "middle",
+  wordBreak: "break-word",
+};
+
+const tdStyle2 = {
   padding: "10px 8px",
   verticalAlign: "middle",
   wordBreak: "break-word",
