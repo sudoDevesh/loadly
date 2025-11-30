@@ -33,7 +33,7 @@ export function pickWeighted(endpoints) {
 }
 
 export async function runLoadTest(config, onUpdate, abortSignal) {
-  const { endpoints, headers, duration, concurrency } = config;
+  const { endpoints, headers, duration, concurrency, rampUp = 0 } = config;
   const tStart = Date.now();
   const tEnd = tStart + duration * 1000;
 
@@ -97,8 +97,18 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
       }
     }
   }
-
-  await Promise.all(Array.from({ length: concurrency }, () => worker()));
+  const workers = [];
+  for (let i = 0; i < concurrency; i++) {
+    const delay = rampUp > 0 ? (rampUp * 1000 * i) / concurrency : 0;
+    workers.push(
+      (async () => {
+        if (delay > 0) await new Promise((res) => setTimeout(res, delay));
+        await worker();
+      })()
+    );
+  }
+  await Promise.all(workers);
+  //await Promise.all(Array.from({ length: concurrency }, () => worker()));
   sendUpdate();
 
   const elapsed = (Date.now() - tStart) / 1000;
