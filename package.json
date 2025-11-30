@@ -1,5 +1,5 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.2",
   "name": "loadly",
   "description": "Load testing CLI + React UI with live analytics",
   "type": "module",
@@ -30,6 +30,7 @@
     "bin",
     "server",
     "core",
+    "cli",
     "ui/dist",
     "package.json",
     "README.md"
