@@ -1,9 +1,24 @@
 import { useState } from "react";
 import Box from "../elements/Box/Box";
 import { Button } from "../elements/Button/Button";
+import { generateHtmlReport } from "../utils/generateHtmlReport";
 
 export default function Dashboard({ live, done }) {
   const [showSummary, setShowSummary] = useState(false);
+
+  const downloadHtmlReport = () => {
+    const reportHtml = generateHtmlReport(done);
+
+    const blob = new Blob([reportHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `loadly-report-${Date.now()}.html`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div
@@ -22,18 +37,33 @@ export default function Dashboard({ live, done }) {
         }}
       >
         <h3 style={{ margin: 0 }}>Live Metrics</h3>
+
         {done && (
-          <Button
-            variant="secondary"
-            onClick={() => setShowSummary(true)}
-            style={{
-              padding: "6px 10px",
-              fontSize: "0.8rem",
-              height: "fit-content",
-            }}
-          >
-            Show Final Summary
-          </Button>
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => setShowSummary(true)}
+              style={{
+                padding: "6px 10px",
+                fontSize: "0.8rem",
+                height: "fit-content",
+              }}
+            >
+              Show Final Summary
+            </Button>
+
+            <Button
+              variant="primary"
+              onClick={downloadHtmlReport}
+              style={{
+                padding: "6px 10px",
+                fontSize: "0.8rem",
+                height: "fit-content",
+              }}
+            >
+              Download Report
+            </Button>
+          </>
         )}
       </div>
 
@@ -97,13 +127,16 @@ export default function Dashboard({ live, done }) {
             >
               {JSON.stringify(done, null, 2)}
             </pre>
+
             <div
               style={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 marginTop: 16,
               }}
             >
+              <Button onClick={downloadHtmlReport}>Download Report</Button>
+
               <Button onClick={() => setShowSummary(false)}>Close</Button>
             </div>
           </div>
@@ -135,3 +168,4 @@ const modalContentStyle = {
   maxHeight: "80vh",
   overflowY: "auto",
 };
+
