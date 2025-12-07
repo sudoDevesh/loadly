@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { _test, runLoadTest } from "../../core/engine.js"; // note: import _test
+import { _test, runLoadTest } from "../../core/engine.js";
 
 const { fillTemplate, pickWeighted } = _test;
 
@@ -15,7 +15,7 @@ describe("runLoadTest", () => {
     jest.clearAllMocks();
   });
 
-  test("counts success responses", async () => {
+  test("counts success responses and tracks endpoints", async () => {
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
     const updates = [];
@@ -33,9 +33,12 @@ describe("runLoadTest", () => {
     expect(result.failure).toBe(0);
     expect(result.codes[200]).toBe(result.total);
     expect(updates.length).toBeGreaterThan(0);
+
+    // ✅ Verify endpoints are tracked
+    expect(result.endpoints).toEqual([{ url: "http://x", method: "GET" }]);
   });
 
-  test("counts failure responses (non-OK status)", async () => {
+  test("counts failure responses (non-OK status) and tracks endpoints", async () => {
     fetchMock.mockResolvedValue({ ok: false, status: 500 });
 
     const config = {
@@ -50,9 +53,12 @@ describe("runLoadTest", () => {
     expect(result.success).toBe(0);
     expect(result.failure).toBeGreaterThan(0);
     expect(result.codes[500]).toBe(result.total);
+
+    // Endpoint tracking
+    expect(result.endpoints).toEqual([{ url: "http://x", method: undefined }]);
   });
 
-  test("counts fetch error as ERR", async () => {
+  test("counts fetch error as ERR and tracks endpoints", async () => {
     fetchMock.mockRejectedValue(new Error("boom"));
 
     const config = {
@@ -66,13 +72,13 @@ describe("runLoadTest", () => {
 
     expect(result.failure).toBeGreaterThan(0);
     expect(result.codes.ERR).toBe(result.total);
+    expect(result.endpoints).toEqual([{ url: "http://x", method: undefined }]);
   });
 
-  test("respects abortSignal", async () => {
+  test("respects abortSignal and tracks endpoints", async () => {
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
     const abortController = new AbortController();
-
     const config = {
       endpoints: [{ url: "http://x" }],
       duration: 1, // 1 second
@@ -88,12 +94,11 @@ describe("runLoadTest", () => {
     const result = await promise;
 
     expect(result.total).toBeGreaterThan(0);
-    // Should not have run the full duration
     expect(result.elapsedSec).toBeLessThan(1.5);
+    expect(result.endpoints).toEqual([{ url: "http://x", method: undefined }]);
   });
 
-  test("aggregates latency metrics (avg, p95)", async () => {
-    // Fake different latencies by delaying fetch
+  test("aggregates latency metrics and tracks endpoints", async () => {
     fetchMock.mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve({ ok: true, status: 200 }), 10))
     );
@@ -110,6 +115,7 @@ describe("runLoadTest", () => {
     expect(result.avg).toBeGreaterThan(0);
     expect(result.p95).toBeGreaterThan(0);
     expect(result.codes[200]).toBe(result.total);
+    expect(result.endpoints).toEqual([{ url: "http://x", method: undefined }]);
   });
 });
 

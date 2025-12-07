@@ -38,6 +38,7 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
   const tEnd = tStart + duration * 1000;
 
   const stats = { total: 0, success: 0, failure: 0, times: [], codes: {} };
+  const testedEndpoints = [];
 
   const sendUpdate = () => {
     const elapsed = (Date.now() - tStart) / 1000;
@@ -56,11 +57,15 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
       memory: { rss: mem.rss, heapUsed: mem.heapUsed, heapTotal: mem.heapTotal },
       elapsedSec: elapsed,
       codes: stats.codes,
+      endpoints: testedEndpoints,
     });
   };
 
   async function oneRequest() {
     const ep = pickWeighted(endpoints);
+    if (!testedEndpoints.some(e => e.url === ep.url && e.method === ep.method)) {
+      testedEndpoints.push({ url: ep.url, method: ep.method });
+    }
     const finalHeaders = { ...(headers || {}), ...(ep.headers || {}) };
     const body = ep.body !== undefined ? fillTemplate(ep.body) : undefined;
     const init = {
@@ -127,6 +132,7 @@ export async function runLoadTest(config, onUpdate, abortSignal) {
     memory: { rss: mem.rss, heapUsed: mem.heapUsed, heapTotal: mem.heapTotal },
     elapsedSec: elapsed,
     codes: stats.codes,
+    endpoints: testedEndpoints, // include endpoints in final result
   };
 }
 
